@@ -1,0 +1,3 @@
+Memory leaks
+Unclosed MongoDB connections
+redis and closing redis connection
