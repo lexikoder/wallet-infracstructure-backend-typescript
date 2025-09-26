@@ -1,6 +1,7 @@
-import express, {Router} from "express"
+import express, {RequestHandler, Router} from "express"
 import  {reqOtp,verifyOtp,RegisterUser,LoginUser,refreshAccessToken,logout,decryptApikey} from "../controller/auth-controller"
 import  {ratelimitingOtp} from "../middleware/rateLimiting"
+import { authMiddleware } from "../middleware/authentication-middleware"
 const router: Router = express.Router()
 
 
@@ -11,11 +12,7 @@ router.post("/verifyotp",ratelimitingOtp(),verifyOtp)
 router.post("/register",RegisterUser)
 router.post("/login",LoginUser)
 router.post("/refreshtoken",refreshAccessToken)
-router.post("/logout",logout)
-router.get("/userapikey/:userId",decryptApikey)
-
-
-     
+router.post("/logout",authMiddleware as RequestHandler,logout)
 
 export {router}
 
