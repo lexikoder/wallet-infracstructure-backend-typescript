@@ -54,7 +54,7 @@ const nodemailerOtp = (toemailaddress, otp, expires) => __awaiter(void 0, void 0
             service: "gmail",
             host: "smtp.gmail.com",
             port: 587,
-            secure: false, // true for 465, false for other ports
+            secure: true, // true for 465, false for other ports
             auth: {
                 user: EMAIL,
                 pass: EMAIL_APP_PASSWORD,
