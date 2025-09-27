@@ -28,8 +28,8 @@ const nodemailerResetLink = (toemailaddress, username, resetLink, expires) => __
         const transporter = nodemailer_1.default.createTransport({
             service: "gmail",
             host: "smtp.gmail.com",
-            port: 587,
-            secure: false, // true for 465, false for other ports
+            port: 465,
+            secure: true, // true for 465, false for other ports
             auth: {
                 user: EMAIL,
                 pass: EMAIL_APP_PASSWORD,
@@ -53,7 +53,7 @@ const nodemailerOtp = (toemailaddress, otp, expires) => __awaiter(void 0, void 0
         const transporter = nodemailer_1.default.createTransport({
             service: "gmail",
             host: "smtp.gmail.com",
-            port: 587,
+            port: 465,
             secure: true, // true for 465, false for other ports
             auth: {
                 user: EMAIL,

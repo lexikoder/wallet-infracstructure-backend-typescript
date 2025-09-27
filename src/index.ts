@@ -12,11 +12,13 @@ import  {ratelimitingGeneral}  from "./middleware/rateLimiting"
 import  {errorHandler} from "./middleware/errorHandler"
 import  helmet from "helmet"
 import cookieParser from 'cookie-parser'
+import timeout from "connect-timeout";
 
 const port = process.env.PORT ;
 const app: Express = express();
 
 app.use(helmet());
+app.use(timeout("60s"));
 app.use(configureCors()) 
 app.use(ratelimitingGeneral(100,15*60*1000))
 app.use(express.json())
