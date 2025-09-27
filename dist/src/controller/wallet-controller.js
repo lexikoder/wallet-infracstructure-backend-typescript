@@ -21,22 +21,30 @@ const accounts_2 = require("viem/accounts");
 const viem_1 = require("viem");
 const appError_1 = require("../utils/appError");
 const createWallet = (0, tryCatch_1.tryCatch)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { network } = req.body;
+    const { networktype } = req.body;
     const mnemonic = (0, accounts_1.generateMnemonic)(english_1.wordlist);
     console.log("started");
     // const account = mnemonicToAccount(mnemonic);
     let account;
     const addresses = [];
-    for (let i = 0; i < 10; i++) {
-        account = (0, accounts_1.mnemonicToAccount)(mnemonic, {
-            path: `m/44'/60'/0'/0/${i}`, // N = i
-        });
-        addresses.push(account.address);
+    if (networktype === networktypeEVM) {
+        for (let i = 0; i < 10; i++) {
+            account = (0, accounts_1.mnemonicToAccount)(mnemonic, {
+                path: `m/44'/60'/0'/0/${i}`, // N = i
+            });
+            addresses.push(account.address);
+        }
+    }
+    if (networktype === networktypeSOLANA) {
+        //todo
+    }
+    if (networktype === networktypeAPTOS) {
+        //todo
     }
     let walletdata = {
         // ...data,
         address: addresses,
-        network: network,
+        network: networktype,
     };
     // const privatekey = bytesToHex(account.getHdKey().privateKey);
     const createdwallet = yield wallet_1.Wallet.create(walletdata);
@@ -47,7 +55,7 @@ const createWallet = (0, tryCatch_1.tryCatch)((req, res) => __awaiter(void 0, vo
             data: {
                 walletId: createdwallet._id,
                 walletAddress: createdwallet.address[0],
-                network: createdwallet.network,
+                network: createdwallet.networktype,
                 mnemonic: mnemonic,
             },
         });
@@ -87,7 +95,7 @@ const getAllAddress = (0, tryCatch_1.tryCatch)((req, res) => __awaiter(void 0, v
 }));
 exports.getAllAddress = getAllAddress;
 const getBalance = (0, tryCatch_1.tryCatch)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { walletId, token } = req.query;
+    const { walletId, token, _network } = req.query;
     const getWalletDatabyid = yield wallet_1.Wallet.findById(walletId);
     if (!getWalletDatabyid) {
         return res.status(400).json({
@@ -95,7 +103,7 @@ const getBalance = (0, tryCatch_1.tryCatch)((req, res) => __awaiter(void 0, void
             message: "no address found",
         });
     }
-    const network = (0, networks_1.networks)(getWalletDatabyid.network);
+    const network = (0, networks_1.networks)(getWalletDatabyid.networktype, _network);
     let balance;
     let decimal;
     let _token;
@@ -116,7 +124,7 @@ const getBalance = (0, tryCatch_1.tryCatch)((req, res) => __awaiter(void 0, void
         message: "Successfully fetched wallet balance",
         data: {
             address: useraddress,
-            network: getWalletDatabyid.network,
+            network: getWalletDatabyid.networktype,
             balance: balance.toString(),
             decimal: decimal,
             token: _token,
@@ -125,7 +133,7 @@ const getBalance = (0, tryCatch_1.tryCatch)((req, res) => __awaiter(void 0, void
 }));
 exports.getBalance = getBalance;
 const transferDefault = (0, tryCatch_1.tryCatch)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { mnemonic, walletId, token, fromaddress, toaddress, amount } = req.body;
+    const { mnemonic, walletId, token, fromaddress, toaddress, amount, _network } = req.body;
     const getWalletDatabyid = yield wallet_1.Wallet.findById(walletId);
     if (!getWalletDatabyid) {
         return res.status(400).json({
@@ -145,7 +153,7 @@ const transferDefault = (0, tryCatch_1.tryCatch)((req, res) => __awaiter(void 0,
     }
     const privateKey = (0, viem_1.bytesToHex)(hdKey.privateKey);
     const account = (0, accounts_2.privateKeyToAccount)(privateKey);
-    const network = (0, networks_1.networks)(getWalletDatabyid.network);
+    const network = (0, networks_1.networks)(getWalletDatabyid.networktype, _network);
     const client = (0, viem_1.createWalletClient)({
         account,
         chain: network === null || network === void 0 ? void 0 : network.network,

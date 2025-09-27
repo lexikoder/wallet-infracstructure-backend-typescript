@@ -23,13 +23,14 @@ import { AppError } from "../utils/appError"
 
 
 
-const createWallet = tryCatch(async (req:Request<{},{},{network:string}>, res:Response) => {
-  const { network } = req.body;
+const createWallet = tryCatch(async (req:Request<{},{},{networktype:string}>, res:Response) => {
+  const { networktype } = req.body;
   const mnemonic = generateMnemonic(wordlist);
   console.log("started")
   // const account = mnemonicToAccount(mnemonic);
   let account;
   const addresses = [];
+  if (networktype === networktypeEVM) {
 
   for (let i = 0; i < 10; i++) {
     account = mnemonicToAccount(mnemonic, {
@@ -37,11 +38,22 @@ const createWallet = tryCatch(async (req:Request<{},{},{network:string}>, res:Re
     });
     addresses.push(account.address);
   }
+  }
+
+  if (networktype === networktypeSOLANA) {
+    
+  //todo
+  }
+
+  if (networktype === networktypeAPTOS) {
+    
+  //todo
+  }
 
   let walletdata = {
     // ...data,
     address: addresses,
-    network: network,
+    network: networktype,
   };
   // const privatekey = bytesToHex(account.getHdKey().privateKey);
   const createdwallet = await Wallet.create(walletdata);
@@ -52,7 +64,7 @@ const createWallet = tryCatch(async (req:Request<{},{},{network:string}>, res:Re
       data: {
         walletId: createdwallet._id,
         walletAddress: createdwallet.address[0],
-        network: createdwallet.network,
+        network: createdwallet.networktype,
         mnemonic: mnemonic,
       },
     });
@@ -93,8 +105,8 @@ const getAllAddress = tryCatch(async (req:Request<{walletId:string},{},{}>, res:
   });
 });
 
-const getBalance = tryCatch(async (req:Request<{walletId:string},{},{},{walletId:string,token:string}>, res:Response) => {
-  const { walletId, token } = req.query;
+const getBalance = tryCatch(async (req:Request<{walletId:string},{},{},{walletId:string,token:string,_network:string}>, res:Response) => {
+  const { walletId, token, _network } = req.query;
   const getWalletDatabyid = await Wallet.findById(walletId);
   if (!getWalletDatabyid) {
     return res.status(400).json({
@@ -102,7 +114,7 @@ const getBalance = tryCatch(async (req:Request<{walletId:string},{},{},{walletId
       message: "no address found",
     });
   }
-  const network = networks(getWalletDatabyid.network);
+  const network = networks(getWalletDatabyid.networktype,_network);
   let balance;
   let decimal;
   let _token;
@@ -122,7 +134,7 @@ const getBalance = tryCatch(async (req:Request<{walletId:string},{},{},{walletId
     message: "Successfully fetched wallet balance",
     data: {
       address: useraddress,
-      network: getWalletDatabyid.network,
+      network: getWalletDatabyid.networktype,
       balance: balance.toString(),
       decimal: decimal,
       token: _token,
@@ -137,9 +149,10 @@ interface ITransfer {
   fromaddress:string;
   toaddress:string;
   amount:string;
+  _network:string;
 }
 const transferDefault = tryCatch(async (req:Request<{},{},ITransfer,{}>, res:Response) => {
-  const { mnemonic, walletId, token, fromaddress, toaddress, amount } =
+  const { mnemonic, walletId, token, fromaddress, toaddress, amount ,_network} =
     req.body;
 
   const getWalletDatabyid = await Wallet.findById(walletId);
@@ -162,7 +175,7 @@ const transferDefault = tryCatch(async (req:Request<{},{},ITransfer,{}>, res:Res
   }
   const privateKey = bytesToHex(hdKey.privateKey);
   const account = privateKeyToAccount(privateKey);
-  const network = networks(getWalletDatabyid.network);
+  const network = networks(getWalletDatabyid.networktype,_network);
   const client = createWalletClient({
     account,
     chain: network?.network,

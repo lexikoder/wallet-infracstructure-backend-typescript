@@ -5,11 +5,16 @@ const walletSchema = new mongoose.Schema({
      type:[String],
      required:[true,"Wallet address is required"],
     },
-    network:{
+    networktype:{
      type:String,
-     enum:["SEPOLIA","ETHEREUM","BASE","BASESEPOLIA"],
-     default:"SEPOLIA"
+     enum:["EVM","SOLANA","APTOS"],
+     default:"EVM"
     }
+    // network:{
+    //  type:String,
+    //  enum:["SEPOLIA","ETHEREUM","BASE","BASESEPOLIA"],
+    //  default:"SEPOLIA"
+    // }
 })
 const Wallet =mongoose.model("Wallet",walletSchema) 
 
