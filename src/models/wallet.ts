@@ -7,8 +7,8 @@ const walletSchema = new mongoose.Schema({
     },
     network:{
      type:String,
-     enum:["Sepolia","Ethereum","Base","BaseSepolia"],
-     default:"Sepolia"
+     enum:["SEPOLIA","ETHEREUM","BASE","BASESEPOLIA"],
+     default:"SEPOLIA"
     }
 })
 const Wallet =mongoose.model("Wallet",walletSchema) 
