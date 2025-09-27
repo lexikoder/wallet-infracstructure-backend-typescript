@@ -18,7 +18,7 @@ const port = process.env.PORT ;
 const app: Express = express();
 
 app.use(helmet());
-app.use(timeout("60s"));
+// app.use(timeout("60s"));
 app.use(configureCors()) 
 app.use(ratelimitingGeneral(100,15*60*1000))
 app.use(express.json())
