@@ -48,7 +48,7 @@ const reqOtp = tryCatch(async (req:Request<{},{},{email:string}>, res:Response) 
     verified: false,
   };
  console.log(otp)
-  await nodemailerOtp(email, otp, expirytimeinminutes);
+  // await nodemailerOtp(email, otp, expirytimeinminutes);
  console.log(otp)
   res.status(200).json({
     success: true,

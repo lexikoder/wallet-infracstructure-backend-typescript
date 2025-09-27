@@ -16,7 +16,6 @@ exports.logout = exports.refreshAccessToken = exports.LoginUser = exports.Regist
 const user_1 = require("../models/user");
 const subscription_apikeys_1 = require("../models/subscription-apikeys");
 const refreshToken_1 = require("../models/refreshToken");
-const sendEmail_1 = require("../utils/sendEmail");
 const generateOtp_1 = require("../utils/generateOtp");
 const tryCatch_1 = require("../utils/tryCatch");
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
@@ -50,7 +49,7 @@ const reqOtp = (0, tryCatch_1.tryCatch)((req, res) => __awaiter(void 0, void 0, 
         verified: false,
     };
     console.log(otp);
-    yield (0, sendEmail_1.nodemailerOtp)(email, otp, expirytimeinminutes);
+    // await nodemailerOtp(email, otp, expirytimeinminutes);
     console.log(otp);
     res.status(200).json({
         success: true,

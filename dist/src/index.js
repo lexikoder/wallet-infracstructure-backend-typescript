@@ -27,6 +27,7 @@ const cookie_parser_1 = __importDefault(require("cookie-parser"));
 const connect_timeout_1 = __importDefault(require("connect-timeout"));
 const port = process.env.PORT;
 const app = (0, express_1.default)();
+app.set("trust proxy", 1);
 app.use((0, helmet_1.default)());
 app.use((0, connect_timeout_1.default)("60s"));
 app.use((0, corsConfig_1.configureCors)());

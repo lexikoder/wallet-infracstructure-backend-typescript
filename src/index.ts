@@ -16,7 +16,7 @@ import timeout from "connect-timeout";
 
 const port = process.env.PORT ;
 const app: Express = express();
-
+app.set("trust proxy", 1);
 app.use(helmet());
 app.use(timeout("60s"));
 app.use(configureCors()) 
