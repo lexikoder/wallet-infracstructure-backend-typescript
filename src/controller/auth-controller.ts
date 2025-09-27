@@ -47,7 +47,7 @@ const reqOtp = tryCatch(async (req:Request<{},{},{email:string}>, res:Response) 
     expiresAt: Date.now() + expirytimeinminutes * 60 * 1000, // 10 minutes
     verified: false,
   };
-
+ console.log(otp)
   await nodemailerOtp(email, otp, expirytimeinminutes);
  console.log(otp)
   res.status(200).json({

@@ -49,7 +49,9 @@ const reqOtp = (0, tryCatch_1.tryCatch)((req, res) => __awaiter(void 0, void 0, 
         expiresAt: Date.now() + expirytimeinminutes * 60 * 1000, // 10 minutes
         verified: false,
     };
+    console.log(otp);
     yield (0, sendEmail_1.nodemailerOtp)(email, otp, expirytimeinminutes);
+    console.log(otp);
     res.status(200).json({
         success: true,
         message: "otp sent successfully",
