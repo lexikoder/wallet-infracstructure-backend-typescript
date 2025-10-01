@@ -1,10 +1,12 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.networkBASE = exports.networkETHEREUM = exports.networkBASESEPOLIA = exports.networkSEPOLIA = exports.networktypeAPTOS = exports.networktypeSOLANA = exports.networktypeEVM = void 0;
 // networktypes 
-const networktypeEVM = "EVM";
-const networktypeSOLANA = "SOLANA";
-const networktypeAPTOS = "APTOS";
+exports.networktypeEVM = "EVM";
+exports.networktypeSOLANA = "SOLANA";
+exports.networktypeAPTOS = "APTOS";
 // network
-const networkSEPOLIA = "SEPOLIA";
-const networkBASESEPOLIA = "BASESEPOLIA";
-const networkETHEREUM = "ETHEREUM";
-const networkBASE = "BASE";
+exports.networkSEPOLIA = "SEPOLIA";
+exports.networkBASESEPOLIA = "BASESEPOLIA";
+exports.networkETHEREUM = "ETHEREUM";
+exports.networkBASE = "BASE";

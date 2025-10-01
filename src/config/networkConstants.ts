@@ -1,11 +1,11 @@
 // networktypes 
-const networktypeEVM = "EVM"
-const networktypeSOLANA = "SOLANA"
-const networktypeAPTOS = "APTOS"
+export const networktypeEVM = "EVM"
+export const networktypeSOLANA = "SOLANA"
+export const networktypeAPTOS = "APTOS"
 
 
 // network
-const networkSEPOLIA = "SEPOLIA"
-const networkBASESEPOLIA = "BASESEPOLIA"
-const networkETHEREUM = "ETHEREUM"
-const networkBASE = "BASE"
+export const networkSEPOLIA = "SEPOLIA"
+export const networkBASESEPOLIA = "BASESEPOLIA"
+export const networkETHEREUM = "ETHEREUM"
+export const networkBASE = "BASE"

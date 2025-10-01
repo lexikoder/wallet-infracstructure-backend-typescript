@@ -15,7 +15,9 @@ const abi_1 = require("../config/abi");
 const client = (network) => {
     const client = (0, viem_1.createPublicClient)({
         chain: network.network,
-        transport: (0, viem_1.http)(network.rpc),
+        transport: (0, viem_1.http)(network.rpc, {
+            timeout: 30000, // 30s
+        }),
     });
     return client;
 };
@@ -23,7 +25,9 @@ exports.client = client;
 const readcontract = (network, token, funcName, args) => __awaiter(void 0, void 0, void 0, function* () {
     const client = (0, viem_1.createPublicClient)({
         chain: network.network,
-        transport: (0, viem_1.http)(network.rpc),
+        transport: (0, viem_1.http)(network.rpc, {
+            timeout: 30000, // 30s
+        }),
     });
     const result = yield client.readContract({
         address: token,

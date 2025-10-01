@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.transferDefault = exports.getBalance = exports.getAllAddress = exports.getDefaultAddress = exports.createWallet = void 0;
+exports.importwallettransferDefault = exports.transferDefault = exports.getBalance = exports.getAllAddress = exports.getDefaultAddress = exports.createWallet = void 0;
 const wallet_1 = require("../models/wallet");
 const tryCatch_1 = require("../utils/tryCatch");
 const networks_1 = require("../config/networks");
@@ -20,6 +20,7 @@ const english_1 = require("@scure/bip39/wordlists/english");
 const accounts_2 = require("viem/accounts");
 const viem_1 = require("viem");
 const appError_1 = require("../utils/appError");
+const networkConstants_1 = require("../config/networkConstants");
 const createWallet = (0, tryCatch_1.tryCatch)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { networktype } = req.body;
     const mnemonic = (0, accounts_1.generateMnemonic)(english_1.wordlist);
@@ -27,7 +28,7 @@ const createWallet = (0, tryCatch_1.tryCatch)((req, res) => __awaiter(void 0, vo
     // const account = mnemonicToAccount(mnemonic);
     let account;
     const addresses = [];
-    if (networktype === networktypeEVM) {
+    if (networktype === networkConstants_1.networktypeEVM) {
         for (let i = 0; i < 10; i++) {
             account = (0, accounts_1.mnemonicToAccount)(mnemonic, {
                 path: `m/44'/60'/0'/0/${i}`, // N = i
@@ -35,10 +36,10 @@ const createWallet = (0, tryCatch_1.tryCatch)((req, res) => __awaiter(void 0, vo
             addresses.push(account.address);
         }
     }
-    if (networktype === networktypeSOLANA) {
+    if (networktype === networkConstants_1.networktypeSOLANA) {
         //todo
     }
-    if (networktype === networktypeAPTOS) {
+    if (networktype === networkConstants_1.networktypeAPTOS) {
         //todo
     }
     let walletdata = {
@@ -188,3 +189,50 @@ const transferDefault = (0, tryCatch_1.tryCatch)((req, res) => __awaiter(void 0,
     });
 }));
 exports.transferDefault = transferDefault;
+const importwallettransferDefault = (0, tryCatch_1.tryCatch)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { mnemonic, token, fromaddress, toaddress, amount, networktype, _network } = req.body;
+    const mnemonictoaccount = (0, accounts_1.mnemonicToAccount)(mnemonic, {
+        path: `m/44'/60'/0'/0/0`, // N = i
+    });
+    //   const privatekey = bytesToHex(account.getHdKey().privateKey);
+    const hdKey = mnemonictoaccount.getHdKey(); // `account` must be defined already
+    if (!hdKey.privateKey) {
+        throw new appError_1.AppError('Private key is missing', 400);
+    }
+    const privateKey = (0, viem_1.bytesToHex)(hdKey.privateKey);
+    const account = (0, accounts_2.privateKeyToAccount)(privateKey);
+    const network = (0, networks_1.networks)(networktype, _network);
+    const client = (0, viem_1.createWalletClient)({
+        account,
+        chain: network === null || network === void 0 ? void 0 : network.network,
+        transport: (0, viem_1.http)(network === null || network === void 0 ? void 0 : network.rpc), // or other RPC
+    });
+    let decimal;
+    let _token;
+    let hash;
+    //  const client = clientint(network)
+    if (token === "ETH") {
+        _token = "ETH";
+        decimal = 18;
+        hash = yield (0, contractInteraction_1.sendeth)(network, account, toaddress, amount);
+    }
+    else {
+        decimal = yield (0, contractInteraction_1.readcontract)(network, token, "decimals", []);
+        _token = yield (0, contractInteraction_1.readcontract)(network, token, "name", []);
+        const _amount = (0, viem_1.parseUnits)(amount, Number(decimal));
+        hash = yield (0, contractInteraction_1.senderc20)(network, token, abi_1.erc20Abi, account, toaddress, _amount);
+    }
+    return res.status(201).json({
+        success: true,
+        message: "Successfully transfered token",
+        data: {
+            fromaddress,
+            toaddress,
+            amount,
+            decimal,
+            token: _token,
+            hash,
+        },
+    });
+}));
+exports.importwallettransferDefault = importwallettransferDefault;

@@ -20,6 +20,10 @@ import  {
 import { sepolia } from "viem/chains"
 import {Request, Response, NextFunction} from 'express';
 import { AppError } from "../utils/appError"
+import { networktypeAPTOS, networktypeEVM, networktypeSOLANA } from "../config/networkConstants"
+
+
+
 
 
 
@@ -217,10 +221,77 @@ const transferDefault = tryCatch(async (req:Request<{},{},ITransfer,{}>, res:Res
   });
 });
 
+interface ITransferImportwallet {
+  mnemonic:string; 
+  token:string;
+  fromaddress:string;
+  toaddress:string;
+  amount:string;
+  networktype:string;
+  _network:string;
+}
+
+const importwallettransferDefault = tryCatch(async (req:Request<{},{},ITransferImportwallet,{}>, res:Response) => {
+  const { mnemonic,  token, fromaddress, toaddress, amount ,networktype,_network} =
+    req.body;
+
+  const mnemonictoaccount = mnemonicToAccount(mnemonic, {
+    path: `m/44'/60'/0'/0/0`, // N = i
+  });
+  //   const privatekey = bytesToHex(account.getHdKey().privateKey);
+  const hdKey = mnemonictoaccount.getHdKey(); // `account` must be defined already
+  if (!hdKey.privateKey) {
+  throw new AppError('Private key is missing', 400);
+  }
+  const privateKey = bytesToHex(hdKey.privateKey);         
+  const account = privateKeyToAccount(privateKey); 
+  const network = networks(networktype,_network);
+  const client = createWalletClient({
+    account,
+    chain: network?.network,
+    transport: http(network?.rpc), // or other RPC
+  });
+
+  let decimal;
+  let _token;
+  let hash;
+  //  const client = clientint(network)
+  if (token === "ETH") {
+    _token = "ETH";
+    decimal = 18;
+    hash = await sendeth(network, account, toaddress, amount);
+  } else {
+    decimal = await readcontract(network, token, "decimals", [])
+    _token = await readcontract(network, token, "name", []);
+    const _amount = parseUnits(amount, Number(decimal));
+    hash = await senderc20(
+      network,
+      token,
+      erc20Abi,
+      account,
+      toaddress,
+      _amount
+    );
+  }
+  return res.status(201).json({
+    success: true,
+    message: "Successfully transfered token",
+    data: {
+      fromaddress,
+      toaddress,
+      amount,
+      decimal,
+      token: _token,
+      hash,
+    },
+  });
+});
+
 export  {
   createWallet,
   getDefaultAddress,
   getAllAddress,
   getBalance,
   transferDefault,
+  importwallettransferDefault  
 };

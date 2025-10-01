@@ -1,4 +1,5 @@
 import { mainnet,base,baseSepolia,sepolia } from 'viem/chains'
+import { networkBASE, networkBASESEPOLIA, networkETHEREUM, networkSEPOLIA, networktypeEVM } from './networkConstants'
 
 
 export const networks = (networktype:string,network:string) =>{
@@ -16,4 +17,4 @@ export const networks = (networktype:string,network:string) =>{
      return  {network:base,rpc:process.env.BASE_RPC}    
    }
    }
-}
+}  

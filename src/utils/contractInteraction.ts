@@ -4,7 +4,10 @@ import  {erc20Abi} from "../config/abi"
 const client = (network:any) =>{
 const client = createPublicClient({
          chain: network.network, 
-         transport: http(network.rpc), 
+         transport: http(network.rpc, {
+    timeout: 30_000, // 30s
+  }),
+        
      }); 
   return client
 }
@@ -12,7 +15,10 @@ const client = createPublicClient({
 const readcontract = async (network:any,token:any,funcName:any,args:any) =>{
 const client = createPublicClient({
          chain: network.network, 
-         transport: http(network.rpc), 
+         transport: http(network.rpc, {
+    timeout: 30_000, // 30s
+  }), 
+        
      });
 const result = await client.readContract({
       address: token,
